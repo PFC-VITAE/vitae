@@ -1,6 +1,5 @@
-from usecases.submit_nce import SubmitNCE
+from core.usecases.submit_nce import SubmitNCE
 
 if __name__ == "__main__":
-    sb = SubmitNCE()
-    df = sb.extract_content()
-    print(df)
+    submition_usecase = SubmitNCE()
+    df = submition_usecase.extract_content("./app/data/sepbe51-21_port_113-dct.pdf")
