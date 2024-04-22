@@ -51,6 +51,9 @@ class NCE(Document):
         return self.__to_dataframe(tables)
 
     def file_pages(self):
+        '''
+        Create a list with the number of pages of the file
+        '''
         handler = camelot.handlers.PDFHandler(self.__filepath)
         page_list = handler._get_pages(self.__filepath, pages="all")
         return page_list
