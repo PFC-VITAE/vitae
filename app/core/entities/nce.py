@@ -33,6 +33,8 @@ class NCE(Document):
         for table in table_list:
             dataframe = table.df
             dataframe = self.__clean_dataframe(dataframe)
+            if dataframe.empty: 
+                continue
             if not dataframe.iloc[0, 0]:
                 top = dataframe.iloc[0]
                 dataframe = dataframe.iloc[1:]
@@ -47,14 +49,6 @@ class NCE(Document):
         '''
         Extract the content of the pdf file and create a camelot's table
         '''
-        tables = camelot.read_pdf(self.__filepath, flavor="lattice", pages=f"{pages}")
-        return self.__to_dataframe(tables)
-
-    def file_pages(self):
-        '''
-        Create a list with the number of pages of the file
-        '''
-        handler = camelot.handlers.PDFHandler(self.__filepath)
-        page_list = handler._get_pages(self.__filepath, pages="all")
-        return page_list
+        table_list = camelot.read_pdf(self.__filepath, flavor="lattice", pages=f"{pages}")
+        return self.__to_dataframe(table_list)
     
