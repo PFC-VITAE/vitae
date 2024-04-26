@@ -13,7 +13,7 @@ class NCE(Document):
         '''
         merged = []
         for item in zip(pivot, series):
-            merged.append(item[1] + " " + item[0])
+            merged.append(item[0] + " " + item[1])
         return pd.Series(data=merged, index=pivot.index)
 
     def __clean_dataframe(self, dataframe: pd.DataFrame):
