@@ -15,5 +15,6 @@ async def submit_nce(upload_file: UploadFile, pages: Annotated[str, Form(pattern
     async with aiofiles.open(f"app/infra/storage/{upload_file.filename}", "wb") as file:
         content = await upload_file.read()
         await file.write(content)
+    
     return "success"
     
