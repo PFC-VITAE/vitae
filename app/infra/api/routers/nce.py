@@ -1,20 +1,24 @@
-import aiofiles
-from fastapi import APIRouter, Form, UploadFile
+from fastapi import APIRouter, Form, UploadFile, Depends
 from typing import Annotated
-from core.usecases.submit_nce import SubmitNCE
+from infra.storage.file_storage import FileStorage
+from core.usecases.submit_document import SubmitDocument
+from ..dependency import define_nce_dependency
 
 router = APIRouter(
     prefix="/nce", 
     tags=["NCE"], 
-    dependencies=[],
     responses={404: {"description": "Not found"}}
 )
 
 @router.post("/submit")
-async def submit_nce(upload_file: UploadFile, pages: Annotated[str, Form(pattern="^\d+(?:-\d+)?(?:,\s*\d+(?:-\d+)?)*$")]):
-    async with aiofiles.open(f"app/infra/storage/{upload_file.filename}", "wb") as file:
-        content = await upload_file.read()
-        await file.write(content)
-    
+async def submit_nce(
+    file: UploadFile, 
+    pages: Annotated[str, Form(pattern="^\d+(?:-\d+)?(?:,\s*\d+(?:-\d+)?)*$")],
+    storage: Annotated[FileStorage, Depends()],
+    usecase: Annotated[SubmitDocument, Depends(define_nce_dependency)]
+):
+    await storage.save(file)
+    filepath = storage.path + file.filename
+    usecase.execute(filepath=filepath, pages=pages)
     return "success"
     

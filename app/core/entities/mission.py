@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+from .document import Document
 
 class Mission(ABC):
-    pass
+
+    @abstractmethod
+    def create_document(self) -> Document:
+        pass

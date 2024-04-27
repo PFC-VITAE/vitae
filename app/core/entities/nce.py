@@ -4,9 +4,6 @@ from .document import Document
 
 class NCE(Document):
 
-    def __init__(self, __filepath):
-        self.__filepath = __filepath
-
     def __merge_series(self, pivot, series):
         '''
         Merge the content of two Series
@@ -45,10 +42,10 @@ class NCE(Document):
             dataframe_list.append(dataframe)
         return pd.concat(dataframe_list, ignore_index=True)
 
-    def export_page_content(self, pages):
+    def export_page_content(self, filepath, pages):
         '''
         Extract the content of the pdf file and create a camelot's table
         '''
-        table_list = camelot.read_pdf(self.__filepath, flavor="lattice", pages=f"{pages}")
+        table_list = camelot.read_pdf(filepath=filepath, flavor="lattice", pages=f"{pages}")
         return self.__to_dataframe(table_list)
     
