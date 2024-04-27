@@ -10,7 +10,7 @@ class VitaeExtractor(IVitaeExtractor):
         self.__client = Client(wsdl_url)
         self.wsdl_url = wsdl_url
 
-    def getID(self, cpf, full_name, birth_date):
+    def get_ID(self, cpf, full_name, birth_date):
         return self.__client.service.getIdentificadorCNPq(
             cpf=cpf, 
             nomeCompleto=full_name, 
@@ -18,7 +18,7 @@ class VitaeExtractor(IVitaeExtractor):
         )
                   
 
-    def getVitae(self, id):
+    def get_vitae(self, id):
         vitae_zip = self.__client.service.getCurriculoCompactado(id=id)
 
         if vitae_zip:

@@ -6,8 +6,8 @@ class ConsolidateCandidateData:
         self.__vitae_extractor = vitae_extractor 
 
     def extract_vitae(self, cpf, full_name, birth_date):
-        id = self.__vitae_extractor.getID(cpf=cpf, full_name=full_name, birth_date=birth_date)
+        id = self.__vitae_extractor.get_ID(cpf=cpf, full_name=full_name, birth_date=birth_date)
 
         if id:
-            curriculo = self.__vitae_extractor.getVitae(id)
+            curriculo = self.__vitae_extractor.get_vitae(id)
             return curriculo
