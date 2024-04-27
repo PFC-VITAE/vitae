@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Form, UploadFile, Depends
 from typing import Annotated
 from infra.storage.file_storage import FileStorage
@@ -13,12 +14,12 @@ router = APIRouter(
 @router.post("/submit")
 async def submit_nce(
     file: UploadFile, 
-    pages: Annotated[str, Form(pattern="^\d+(?:-\d+)?(?:,\s*\d+(?:-\d+)?)*$")],
+    pages: Annotated[str, Form(pattern="^\d+(?:-\d+)?$")],
     storage: Annotated[FileStorage, Depends()],
     usecase: Annotated[SubmitDocument, Depends(define_nce_dependency)]
 ):
     await storage.save(file)
     filepath = storage.path + file.filename
-    usecase.execute(filepath=filepath, pages=pages)
-    return "success"
+    dataframe = usecase.execute(filepath=filepath, pages=pages)
+    return json.dumps(dataframe.to_dict(orient="records"), ensure_ascii=False)
     
