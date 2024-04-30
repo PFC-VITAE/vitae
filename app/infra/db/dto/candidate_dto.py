@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 from bson import ObjectId
+from datetime import datetime
 
 @dataclass
 class CursoDTO:
@@ -32,6 +33,9 @@ class CandidateDTO:
                         pais_curso=curso["País Curso"], 
                         modalidade=curso["Modalidade Curso"]) 
                 for curso in doc.get("Cursos", [])]
+        
+        data_nascimento_formatted = datetime.strptime(doc["Data Nascimento"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%d/%m/%Y")
+
         return cls(
             _id=_id,
             posto_grad=doc["Posto/ Grad"],
@@ -39,7 +43,7 @@ class CandidateDTO:
             nome=doc["Nome"],
             nome_guerra=doc["Nome Guerra"],
             cpf=doc["CPF"],
-            data_nascimento=doc["Data Nascimento"],
+            data_nascimento=data_nascimento_formatted,
             ano_turma=doc["Ano Turma"],
             dt_promocao=doc["Dt Promocao"],
             cursos=cursos

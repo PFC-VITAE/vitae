@@ -9,7 +9,7 @@ class CandidateRepository(ICandidateRepository):
 
     def get_all(self):
         db = self.client["DGP_mock"]  
-        collection = db["dados_pessoais"]  
+        collection = db["personal_data"]  
         documents = list(collection.find())
 
         candidates_data = [CandidateDTO.from_dict(doc) for doc in documents]

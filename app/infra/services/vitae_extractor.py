@@ -8,7 +8,6 @@ class VitaeExtractor(IVitaeExtractor):
     
     def __init__(self, wsdl_url=extrator_lattes_url):
         self.__client = Client(wsdl_url)
-        self.wsdl_url = wsdl_url
 
     def get_ID(self, cpf, full_name, birth_date):
         return self.__client.service.getIdentificadorCNPq(
