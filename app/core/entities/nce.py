@@ -16,13 +16,13 @@ class NCE(Document):
             merged.append(item[0] + item[1])
         return pd.Series(data=merged, index=pivot.index)
 
-    def __to_dataframe(self, table_list):
+    def __to_dataframe(self, table_list, end_file=False):
         dataframe_list = []; bottom = pd.Series()
         for table in table_list:
             dataframe = table.df
             dataframe = dataframe.iloc[3:] # remove header
             dataframe = dataframe[dataframe.iloc[:, 0].str.contains('^(?:\d+[a-zA-Z]\d+)?$')] # drop title rows
-            dataframe = dataframe.replace("\n", " ", regex=True) # replace blank space
+            dataframe = dataframe.replace("\\n|\s+", " ", regex=True) # replace blank space
             if dataframe.empty: 
                 continue
             if not dataframe.iloc[0, 0]:
@@ -33,11 +33,22 @@ class NCE(Document):
             if not dataframe.empty: 
                 bottom = dataframe.iloc[-1]
             dataframe_list.append(dataframe)
-            table = pd.concat(dataframe_list, ignore_index=True)
-            table = table.replace(np.nan, "")
+        table = pd.concat(dataframe_list, ignore_index=True)
+        table = table.replace(np.nan, "")
+        if not end_file:
+            table = table.iloc[:-1]
         return table
+    
+    def pages(self, filepath, pages):
+        handler = camelot.handlers.PDFHandler(filepath)
+        page_list = handler._get_pages(filepath, pages=pages)
+        return page_list
 
     def export_page_content(self, filepath, pages):
-        table_list = camelot.read_pdf(filepath=filepath, flavor="lattice", pages=f"{pages}")
-        return self.__to_dataframe(table_list)
+        page_list = self.pages(filepath, pages)
+        all_list = self.pages(filepath, "all")
+        end_file = all_list[-1] == page_list[-1]
+        print
+        table_list = camelot.read_pdf(filepath=filepath, flavor="lattice", pages=pages)
+        return self.__to_dataframe(table_list, end_file)
     
