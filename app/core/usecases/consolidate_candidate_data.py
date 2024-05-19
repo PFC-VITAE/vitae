@@ -17,37 +17,43 @@ class ConsolidateCandidateData:
 
         return candidates
 
-    # def extract_resume(self, object: Candidate):
+    def extract_resume(self, object: Candidate):
 
-    #     id = self.__vitae_extractor.get_ID(cpf=object.cpf, full_name=object.full_name, birth_date=object.birth_date)
+        id = self.__vitae_extractor.get_ID(cpf=object.cpf, full_name=object.full_name, birth_date=object.birth_date)
 
-    #     if id:
-    #         curriculo = self.__vitae_extractor.get_vitae(id)
-    #         return curriculo
+        if id:
+            curriculo = self.__vitae_extractor.get_vitae(id)
+            return curriculo
+
         
     def get_all_candidates(self):
         return self.__candidate_repository.get_all_candidates()
         
     def execute(self):
+        try:
+            candidates_data = self.get_all_candidates()
 
-        candidates_data = self.get_all_candidates()
+            if len(candidates_data) < 1 or candidates_data[0].updated_last < datetime.now().year:
 
-        if len(candidates_data) < 1 or candidates_data[0].updated_last < datetime.now().year:
+                candidates_list = self.get_candidates_personal()
 
-            candidates_list = self.get_candidates_personal()
+                consolidated_candidates = []
 
-            consolidated_candidates = []
-
-            for candidate in candidates_list:
-                resume = self.extract_resume(candidate)
-                candidate.updated_last = datetime.now().year
-                candidate.resume = resume
-            
-                consolidated_candidates.append(candidate)
+                for candidate in candidates_list:
+                    resume = self.extract_resume(candidate)
+                    candidate.updated_last = datetime.now().year
+                    candidate.resume = resume
                 
-            return self.__candidate_repository.insert_candidates(consolidated_candidates)
+                    consolidated_candidates.append(candidate)
+                    
+                return self.__candidate_repository.insert_candidates(consolidated_candidates)
+            
+            else: return candidates_data
+
+        except ValueError as e:
+            print(f"ERROR: {e}")
+
         
-        else: return candidates_data
 
         
         
