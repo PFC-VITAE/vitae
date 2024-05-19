@@ -1,40 +1,40 @@
 from core.interfaces.vitae_extractor import IVitaeExtractor
-from infra.config import extrator_lattes_url
-from zeep import Client
 import zipfile
 import os
 
 class VitaeExtractor(IVitaeExtractor):
     
-    def __init__(self, wsdl_url=extrator_lattes_url):
-        self.__client = Client(wsdl_url)
-        self.wsdl_url = wsdl_url
+    def __init__(self, server):
+        self.__server = server
 
     def get_ID(self, cpf, full_name, birth_date):
-        return self.__client.service.getIdentificadorCNPq(
-            cpf=cpf, 
-            nomeCompleto=full_name, 
-            dataNascimento=birth_date
-        )
+        try:
+            return self.__server.get_ID(cpf, full_name, birth_date)
+        except Exception as e:
+            raise ValueError("Erro ao buscar ID no Extractor") from e
                   
 
     def get_vitae(self, id):
-        vitae_zip = self.__client.service.getCurriculoCompactado(id=id)
+        try: 
+            vitae_zip = self.__server.get_vitae(id).data
 
-        if vitae_zip:
-            with open('./app/data/temp.zip', 'wb') as f:
-                f.write(vitae_zip)
+            if vitae_zip:
+                with open('./app/data/temp.zip', 'wb') as f:
+                    f.write(vitae_zip)
 
-            xml_vitae = f"{id}.xml"
-            with zipfile.ZipFile('./app/data/temp.zip', 'r') as f:
-                f.extract(xml_vitae, "./app/data/cv")
+                xml_vitae = f"{id}.xml"
+                with zipfile.ZipFile('./app/data/temp.zip', 'r') as f:
+                    f.extract(xml_vitae, "./app/data/cv")
+                
+                with open(os.path.join("./app/data/cv", xml_vitae), 'r', encoding='iso-8859-1') as f:
+                    vitae_content = f.read()
             
-            with open(os.path.join("./app/data/cv", xml_vitae), 'r', encoding='iso-8859-1') as f:
-                vitae_content = f.read()
-        
-        if os.path.exists('./app/data/temp.zip'):
-            os.remove('./app/data/temp.zip')
-        if os.path.exists(os.path.join("./app/data/cv", xml_vitae)):
-            os.remove(os.path.join("./app/data/cv", xml_vitae))
+            if os.path.exists('./app/data/temp.zip'):
+                os.remove('./app/data/temp.zip')
+            if os.path.exists(os.path.join("./app/data/cv", xml_vitae)):
+                os.remove(os.path.join("./app/data/cv", xml_vitae))
 
-        return vitae_content
+            return vitae_content
+        
+        except Exception as e:
+            raise ValueError("Erro ao buscar CV no Extractor") from e
