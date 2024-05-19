@@ -1,5 +1,5 @@
-from core.usecases.submit_nce import SubmitNCE
+import uvicorn
+from infra.api.server import app
 
 if __name__ == "__main__":
-    submition_usecase = SubmitNCE()
-    df = submition_usecase.extract_content("./app/data/sepbe51-21_port_113-dct.pdf")
+    uvicorn.run(app, host="127.0.0.1", port=8000)
