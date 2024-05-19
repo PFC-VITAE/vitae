@@ -38,6 +38,7 @@ class ConsolidateCandidateData:
                 candidates_list = self.get_candidates_personal()
 
                 consolidated_candidates = []
+                count = 0
 
                 for candidate in candidates_list:
                     resume = self.extract_resume(candidate)
@@ -45,10 +46,13 @@ class ConsolidateCandidateData:
                     candidate.resume = resume
                 
                     consolidated_candidates.append(candidate)
-                    
-                return self.__candidate_repository.insert_candidates(consolidated_candidates)
+                    count += 1
+
+                self.__candidate_repository.insert_candidates(consolidated_candidates)    
+
+                return f"{count} candidates updated"
             
-            else: return candidates_data
+            else: return "All candidates are up to date"
 
         except ValueError as e:
             print(f"ERROR: {e}")

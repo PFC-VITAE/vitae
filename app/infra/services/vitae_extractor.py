@@ -19,20 +19,20 @@ class VitaeExtractor(IVitaeExtractor):
             vitae_zip = self.__server.get_vitae(id).data
 
             if vitae_zip:
-                with open('./app/data/temp.zip', 'wb') as f:
+                with open('./app/infra/storage/data/temp.zip', 'wb') as f:
                     f.write(vitae_zip)
 
                 xml_vitae = f"{id}.xml"
-                with zipfile.ZipFile('./app/data/temp.zip', 'r') as f:
-                    f.extract(xml_vitae, "./app/data/cv")
+                with zipfile.ZipFile('./app/infra/storage/data/temp.zip', 'r') as f:
+                    f.extract(xml_vitae, "./app/infra/storage/data/cv")
                 
-                with open(os.path.join("./app/data/cv", xml_vitae), 'r', encoding='iso-8859-1') as f:
+                with open(os.path.join("./app/infra/storage/data/cv", xml_vitae), 'r', encoding='iso-8859-1') as f:
                     vitae_content = f.read()
             
-            if os.path.exists('./app/data/temp.zip'):
-                os.remove('./app/data/temp.zip')
-            if os.path.exists(os.path.join("./app/data/cv", xml_vitae)):
-                os.remove(os.path.join("./app/data/cv", xml_vitae))
+            if os.path.exists('./app/infra/storage/data/temp.zip'):
+                os.remove('./app/infra/storage/data/temp.zip')
+            if os.path.exists(os.path.join("./app/infra/storage/data/cv", xml_vitae)):
+                os.remove(os.path.join("./app/infra/storage/data/cv", xml_vitae))
 
             return vitae_content
         
