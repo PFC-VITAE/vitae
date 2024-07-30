@@ -1,8 +1,7 @@
 from core.interfaces.vitae_extractor import IVitaeExtractor
 from core.interfaces.candidate_repository import ICandidateRepository
-from core.entities.candidate import Candidate
 from datetime import datetime
-
+import xml.etree.ElementTree as ET
 
 class ConsolidateCandidateData:
 
@@ -11,13 +10,9 @@ class ConsolidateCandidateData:
         self.__candidate_repository = candidate_repository
 
     def get_candidates_personal(self):
-        candidates_data = self.__candidate_repository.get_all_personal_info()
+        return self.__candidate_repository.get_all_personal_info()
 
-        candidates = [Candidate(doc) for doc in candidates_data]
-
-        return candidates
-
-    def extract_resume(self, object: Candidate):
+    def extract_resume(self, object):
 
         id = self.__vitae_extractor.get_ID(cpf=object.cpf, full_name=object.full_name, birth_date=object.birth_date)
 
@@ -28,6 +23,14 @@ class ConsolidateCandidateData:
         
     def get_all_candidates(self):
         return self.__candidate_repository.get_all_candidates()
+
+    def extract_resume_id(self, resume_xml):
+        if resume_xml: 
+            root = ET.fromstring(resume_xml)
+            resume_id = root.attrib.get('NUMERO-IDENTIFICADOR')
+            return resume_id
+        
+        return None
         
     def execute(self):
         try:
@@ -43,8 +46,14 @@ class ConsolidateCandidateData:
                 for candidate in candidates_list:
                     resume = self.extract_resume(candidate)
                     candidate.updated_last = datetime.now().year
-                    candidate.resume = resume
-                
+                    candidate.resume_id = self.extract_resume_id(resume)
+
+                    self.__candidate_repository.insert_dl_resume(cpf=candidate.cpf, resume=resume, file_extension='xml')
+                    self.__candidate_repository.insert_dl_resume(cpf=candidate.cpf, resume=candidate.dgp_courses, file_extension='json')
+
+                    if hasattr(candidate, 'dgp_courses'):
+                        del candidate.dgp_courses
+
                     consolidated_candidates.append(candidate)
                     count += 1
 
