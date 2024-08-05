@@ -1,15 +1,16 @@
 from ..interfaces.object_store import IObjectStore
 from ..interfaces.vector_store import IVectorStore
+from helpers.dict_to_json import dict_to_json
 import numpy as np
 from ..entities.vectorizer import Vectorizer
-import os
+import os, json
 
 
 class GroupCandidates:
       
     def __init__(self, object_store: IObjectStore, vector_store: IVectorStore):
-        self.object_store = object_store,
-        self.vector_store = vector_store,
+        self.object_store = object_store
+        self.vector_store = vector_store
         self.vectorizer = Vectorizer()
     
     def vectorize_texts(self, objects, vector_to_text_id):
@@ -29,15 +30,16 @@ class GroupCandidates:
             all_embeddings = np.vstack((all_embeddings, segments_embeddings))
             print(f"Vectors for {obj} created.")
         
-        return all_embeddings, vector_to_text_id
+
+        return all_embeddings, dict_to_json(vector_to_text_id)
             
 
     def execute(self):
         vector_to_text_id = {}
-        vectors_exist = self.vector_store.vector_exist()
+        vectors_bool = self.vector_store.vectors_exist()
                
-        if vectors_exist: 
-            index, vector_to_text_id = self.vector_store.get_vector()
+        if vectors_bool: 
+            index, vector_to_text_id = self.vector_store.get_vectors()
         else: 
             objects = self.object_store.list_dl_objects(prefix="refined")
             all_embeddings, vector_to_text_id = self.vectorize_texts(objects, vector_to_text_id)

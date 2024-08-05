@@ -3,6 +3,7 @@ from core.interfaces.object_store import IObjectStore
 from infra.db.connection import dl_connection
 from minio.error import S3Error
 from infra.config import minio_bucket
+from helpers.json_to_string import json_to_string
 
 class ObjectStore(IObjectStore):
 
@@ -47,6 +48,6 @@ class ObjectStore(IObjectStore):
         try:
             response = self.dl_client.get_object(minio_bucket, object_name)
             content = response.read()
-            return json.loads(content.decode('utf-8'))
+            return json_to_string(json.loads(content.decode('utf-8')))
         except S3Error as e:
             print(f"Error occurred while getting {object_name}. Error: {e}")
