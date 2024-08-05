@@ -14,6 +14,3 @@ class ICandidateRepository(ABC):
     def get_all_candidates(self):
         pass
 
-    @abstractmethod
-    def insert_dl_resume(self, cpf, resume, file_extension):
-        pass

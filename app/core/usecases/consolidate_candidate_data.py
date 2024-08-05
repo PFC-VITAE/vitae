@@ -1,13 +1,15 @@
 from core.interfaces.vitae_extractor import IVitaeExtractor
 from core.interfaces.candidate_repository import ICandidateRepository
+from core.interfaces.object_store import IObjectStore
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
 class ConsolidateCandidateData:
 
-    def __init__(self, vitae_extractor: IVitaeExtractor, candidate_repository: ICandidateRepository):
+    def __init__(self, vitae_extractor: IVitaeExtractor, candidate_repository: ICandidateRepository, object_storage: IObjectStore):
         self.__vitae_extractor = vitae_extractor 
         self.__candidate_repository = candidate_repository
+        self.__object_storage: object_storage
 
     def get_candidates_personal(self):
         return self.__candidate_repository.get_all_personal_info()
@@ -48,8 +50,8 @@ class ConsolidateCandidateData:
                     candidate.updated_last = datetime.now().year
                     candidate.resume_id = self.extract_resume_id(resume)
 
-                    self.__candidate_repository.insert_dl_resume(cpf=candidate.cpf, resume=resume, file_extension='xml')
-                    self.__candidate_repository.insert_dl_resume(cpf=candidate.cpf, resume=candidate.dgp_courses, file_extension='json')
+                    self.__object_storage.insert_dl_resume(cpf=candidate.cpf, resume=resume, file_extension='xml')
+                    self.__object_storage.insert_dl_resume(cpf=candidate.cpf, resume=candidate.dgp_courses, file_extension='json')
 
                     if hasattr(candidate, 'dgp_courses'):
                         del candidate.dgp_courses
@@ -57,7 +59,7 @@ class ConsolidateCandidateData:
                     consolidated_candidates.append(candidate)
                     count += 1
 
-                self.__candidate_repository.insert_candidates(consolidated_candidates)    
+                self.__object_storage.insert_candidates(consolidated_candidates)    
 
                 return f"{count} candidates updated"
             

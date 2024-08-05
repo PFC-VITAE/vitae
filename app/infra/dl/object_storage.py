@@ -1,7 +1,8 @@
-import json
-import os
+import json, os
 from core.interfaces.object_store import IObjectStore
 from infra.db.connection import dl_connection
+from minio.error import S3Error
+from infra.config import minio_bucket
 
 class ObjectStore(IObjectStore):
 
@@ -35,12 +36,17 @@ class ObjectStore(IObjectStore):
 
             os.remove(file_name)
     
-    def list_dl_objects(self, bucket_name, prefix):
-        objects = self.dl_client.list_objects(bucket_name, prefix=prefix, recursive=True)
-        return [obj.object_name for obj in objects]
+    def list_dl_objects(self, prefix):
+        try:
+            objects = self.dl_client.list_objects(minio_bucket, prefix=prefix, recursive=True)
+            return [obj.object_name for obj in objects]
+        except S3Error as e:
+            print(f"ERROR: {e}")
     
-    def get_dl_object(self, bucket_name, object_name):
-        response = self.dl_client.get_object(bucket_name, object_name)
-        content = response.read()
-        return json.loads(content.decode('utf-8'))
-    
+    def get_dl_object(self, object_name):
+        try:
+            response = self.dl_client.get_object(minio_bucket, object_name)
+            content = response.read()
+            return json.loads(content.decode('utf-8'))
+        except S3Error as e:
+            print(f"Error occurred while getting {object_name}. Error: {e}")
