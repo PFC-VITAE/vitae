@@ -1,20 +1,20 @@
 from ..interfaces.object_store import IObjectStore
 from ..interfaces.vector_store import IVectorStore
 from helpers.dict_to_json import dict_to_json
-import numpy as np
 from ..entities.vectorizer import Vectorizer
 from ..entities.cluster_algorithm import ClusterAlgorithm
-import os, json
-from helpers.visualize_similarity import *
-
+from ..interfaces.cluster_repository import IClusterRepository
+import numpy as np
+import os
 
 class GroupCandidates:
       
-    def __init__(self, object_store: IObjectStore, vector_store: IVectorStore):
+    def __init__(self, object_store: IObjectStore, vector_store: IVectorStore, cluster_repository: IClusterRepository):
         self.object_store = object_store
         self.vector_store = vector_store
         self.vectorizer = Vectorizer()
         self.cluster_algorithm = ClusterAlgorithm()
+        self.__cluster_repository = cluster_repository
     
     def vectorize_texts(self, objects, vector_to_text_id):
         all_embeddings = np.empty((0, 768))
@@ -33,9 +33,29 @@ class GroupCandidates:
             all_embeddings = np.vstack((all_embeddings, segments_embeddings))
             print(f"Vectors for {obj} created.")
         
-
         return all_embeddings, dict_to_json(vector_to_text_id)
-            
+    
+    def save_clusters(self, labels, vector_to_text_id):
+        clusters = []
+        for label in set(labels):
+            if label == -1: #Ignore noise
+                continue
+
+            cluster = {
+                'label': int(label),
+                'ids': [],
+                'cpfs': []
+            }
+
+            for i, l in enumerate(labels):
+                if l == label:
+                    cluster['ids'].append(i)  
+                    cluster['cpfs'].append(vector_to_text_id[str(i)])  
+
+            clusters.append(cluster)
+
+        self.__cluster_repository.insert_clusters(clusters)
+
 
     def execute(self):
         vector_to_text_id = {}
@@ -47,41 +67,18 @@ class GroupCandidates:
         else: 
             objects = self.object_store.list_dl_objects(prefix="refined")
             all_embeddings, vector_to_text_id = self.vectorize_texts(objects, vector_to_text_id)
-            index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id)
-        
-        # query_vector = self.vectorizer.vectorize("Desenvolver conhecimentos sobre as propriedades das biocerâmicas para aplicações em odontologia e medicina.")
-
-        # distances, indices = self.vector_store.search_similar(query_vector, index, k=10)
-
-        # similar_text_ids = [vector_to_text_id[str(idx)] for idx in indices[0]]
-        # print(similar_text_ids)
-        
+            index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id) 
 
 
-        # # !EXPERIMENTO SIMILARIDADE
+        labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
 
-        # query_text = "Desenvolver conhecimentos sobre as propriedades das biocerâmicas para aplicações em odontologia e medicina."
-        # query_vector = self.vectorizer.vectorize(query_text)
+        self.save_clusters(labels, vector_to_text_id)
 
-        # distances, indices = self.vector_store.search_similar(query_vector, index, k=15)
+        #!EXPERIMENTOs CLUSTERING
+        # find_optimal_eps(vectors, k=1536)
+        # print(self.cluster_algorithm.kmeans(n=6, X=vectors))
 
-        # similar_text_ids = [vector_to_text_id[str(idx)] for idx in indices[0]]
-        # print(similar_text_ids)
-        # print(distances)
-
-        # similar_vectors = vectors[indices[0]]
-        # # visualize_similarity_results(query_text, similar_text_ids, distances[0])
-        # # visualize_similarity_results_with_query(query_vector, similar_vectors, similar_text_ids, perplexity=min(5, len(similar_vectors)-1))
-     
-
-        #!EXPERIMENTO CLUSTERING
-        eps_values = [5, 7]
-        min_samples_values = [769, 1536]
-
-        find_optimal_eps(vectors, k=1536)
-
-        print(self.cluster_algorithm.dbscan(vectors, ep=9.3, minPts=1536))
-
-        # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=True)
+        # eps_values = [5, 7]
+        # min_samples_values = [769, 1536]
         # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=False)
-        
+

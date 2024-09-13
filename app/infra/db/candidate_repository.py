@@ -35,6 +35,8 @@ class CandidateRepository(ICandidateRepository):
 
                 if candidate_id:
                     collection.replace_one({'_id': candidate_id}, candidate, upsert=True)
+                else:
+                    collection.insert_one(candidate)
 
 
             return "Dados inseridos ou atualizados com sucesso"
