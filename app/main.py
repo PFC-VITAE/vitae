@@ -7,11 +7,12 @@ from infra.api.server import app
 # from core.usecases.group_candidates import GroupCandidates
 # from infra.dl.object_storage import ObjectStore
 from infra.db.vector_store import VectorStore
+# from infra.db.cluster_repository import ClusterRepository
 
 # object_store = ObjectStore()
 v_store = VectorStore()
 
-# usecase = GroupCandidates(object_store=object_store, vector_store=v_store)
+# usecase = GroupCandidates(object_store=object_store, vector_store=v_store, cluster_repository=ClusterRepository())
 # usecase.execute()
 
 from core.usecases.list_best_candidates import ListBestCandidates

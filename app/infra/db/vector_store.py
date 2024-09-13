@@ -2,7 +2,6 @@ import json, faiss, os
 from core.interfaces.vector_store import IVectorStore
 import numpy as np
 
-
 class VectorStore(IVectorStore):
 
     def __init__(self, d=768):
