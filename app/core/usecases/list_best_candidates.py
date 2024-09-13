@@ -21,13 +21,6 @@ class ListBestCandidates:
         self.vector_store = vector_store
         self.vectorizer = Vectorizer()
         self.candidate_filter = CandidateFilter()
-
-    def get_degree_type(code):
-        if 'D' in code:
-            return 'Doctorade'
-        elif 'M' in code:
-            return 'Master'
-        return 'Indefinido'
     
     def filter_index(self, index, vectors, vector_to_text_id, filtered_candidates_cpf):
         filtered_candidates_id = {k: v for k, v in vector_to_text_id.items() if v in filtered_candidates_cpf}
@@ -53,8 +46,6 @@ class ListBestCandidates:
     
     def execute(self):
         candidates = self.__candidate_repository.get_all_candidates()
-
-        nce['degree_type'] = self.get_degree_type(nce["código"])
 
         filtered_candidates = self.candidate_filter.apply_filters(candidates, mission=nce)
 

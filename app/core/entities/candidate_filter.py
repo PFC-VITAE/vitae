@@ -3,7 +3,7 @@ class CandidateFilter:
     def apply_filters(self, candidates, mission):
         mission_ranks = [rank.strip() for rank in mission["posto"].split(',')]
         mission_profiles = [profile.strip().lower() for profile in mission["perfil"].split(',')]
-        mission_degree_type = mission["degree_type"]
+        mission_degree_type = self.get_degree_type(mission["código"])
 
         filtered_candidates = []
         for candidate in candidates:
@@ -13,6 +13,13 @@ class CandidateFilter:
     
     def filter_rank(self, mission_ranks, candidate):
         return candidate.rank in mission_ranks
+    
+    def get_degree_type(self, mission_code):
+        if 'D' in mission_code:
+            return 'Doctorade'
+        elif 'M' in mission_code:
+            return 'Master'
+        return 'Undefined'
 
     def filter_profile(self, mission_profiles, candidate):
         candidate_profile = candidate.qas_qms.strip().lower()
