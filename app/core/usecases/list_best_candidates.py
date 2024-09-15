@@ -8,7 +8,7 @@ nce = {
     "código": "42M2025 (Muito Alta)",
     "posto": "1º Ten, Cap", 
     "perfil": "QEM Compt",
-    "conhecimento_específico": "Algoritmos de Aprendizado de Máquina e Modelos de Linguagem Aplicados à Interação entre Humanos e Máquinas.",
+    "conhecimento_específico": "Algoritmos de Aprendizado de Máquina Aplicados à Detecção Automática de Comportamento Suspeito em Redes Sociais.",
     "aplicação": "Defesa Cibernética, Segurança da Informação, Capacitação de Recursos Humanos na forma de pessoal para os cursos de graduação no IME, principalmente na área de Engenharia da Computação.",
     "programa": "Engenharia de Defesa (PGED)",
 }
@@ -31,9 +31,15 @@ class ListBestCandidates:
         return filtered_index, new_vector_to_text_id
 
     def find_similar_candidates(self, query_vector, filtered_candidates, index, vector_to_text_id):
-        distances, indices = self.vector_store.search_similar(query_vector, index, k=10)
+        distances, indices = self.vector_store.search_similar(query_vector, index, k=20)
         similar_text_ids = [vector_to_text_id[str(idx)] for idx in indices[0]]
-        return [candidate.full_name for candidate in filtered_candidates if candidate.cpf in similar_text_ids]
+        similar_candidates = []
+        for cpf in similar_text_ids:
+            for candidate in filtered_candidates:
+                if candidate.cpf == cpf:
+                    similar_candidates.append(candidate.full_name)
+                    break
+        return similar_candidates
 
     def get_vectors_index(self):
         vectors_bool = self.vector_store.vectors_exist()
@@ -55,12 +61,12 @@ class ListBestCandidates:
 
         filtered_index, new_vector_to_text_id = self.filter_index(index, vectors, vector_to_text_id, filtered_candidates_cpf)
 
-        query_vector = self.vectorizer.vectorize({
-            "conhecimento_específico": nce["conhecimento_específico"],
-            "aplicação": nce["aplicação"]
-        })
+        nce_text = f"{nce['aplicação']} {nce['conhecimento_específico']}"
+
+        query_vector = self.vectorizer.vectorize(nce_text)
    
         similar_candidates = self.find_similar_candidates(query_vector, filtered_candidates, filtered_index, new_vector_to_text_id)
+        print(similar_candidates)
         return similar_candidates
     
     

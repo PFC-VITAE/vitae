@@ -16,7 +16,7 @@ class CandidateFilter:
     
     def get_degree_type(self, mission_code):
         if 'D' in mission_code:
-            return 'Doctorade'
+            return 'Doctorate'
         elif 'M' in mission_code:
             return 'Master'
         return 'Undefined'
@@ -35,9 +35,9 @@ class CandidateFilter:
         if mission_degree_type == "Master":
             if hasattr(candidate, "master") and candidate.master:
                 return False
-        elif mission_degree_type == "Doctorade":
+        elif mission_degree_type == "Doctorate":
             if hasattr(candidate, "master") and candidate.master:
-                if hasattr(candidate, "doctorade") and not candidate.doctorade:
+                if hasattr(candidate, "doctorate") and not candidate.doctorate:
                     return True
                 else:
                     return False
