@@ -17,3 +17,11 @@ class IVectorStore(ABC):
     @abstractmethod
     def search_similar(self, query_vector, index, k):
         pass
+
+    @abstractmethod
+    def create_index(self, vectors):
+        pass
+
+    @abstractmethod
+    def calculate_distance(self, query_vector, centroid):
+        pass

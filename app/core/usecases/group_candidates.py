@@ -35,7 +35,7 @@ class GroupCandidates:
         
         return all_embeddings, dict_to_json(vector_to_text_id)
     
-    def save_clusters(self, labels, vector_to_text_id):
+    def save_clusters(self, labels, centroids, vector_to_text_id):
         clusters = []
         for label in set(labels):
             if label == -1: #Ignore noise
@@ -43,6 +43,7 @@ class GroupCandidates:
 
             cluster = {
                 'label': int(label),
+                'centroid': centroids[label].tolist(),
                 'ids': [],
                 'cpfs': []
             }
@@ -70,9 +71,10 @@ class GroupCandidates:
             index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id) 
 
 
-        labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
+        # labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
+        labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
 
-        self.save_clusters(labels, vector_to_text_id)
+        self.save_clusters(labels, centroids, vector_to_text_id)
 
         #!EXPERIMENTOs CLUSTERING
         # find_optimal_eps(vectors, k=1536)
@@ -81,4 +83,3 @@ class GroupCandidates:
         # eps_values = [5, 7]
         # min_samples_values = [769, 1536]
         # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=False)
-
