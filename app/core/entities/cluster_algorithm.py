@@ -18,7 +18,9 @@ class ClusterAlgorithm:
         plt.ylabel("Feature space for the 2nd feature")
         plt.title("KMeans Clustering")
         plt.show()
-        return kmeans.labels_
+        labels = kmeans.labels_
+        centroids = kmeans.cluster_centers_
+        return labels, centroids
 
     def kmeans_silhoutte(self, X):
         range_n_clusters = [2, 3, 4, 5, 6]

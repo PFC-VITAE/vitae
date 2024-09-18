@@ -35,3 +35,6 @@ class VectorStore(IVectorStore):
         index = faiss.IndexFlatL2(768)
         index.add(np.array(vectors))
         return index
+    
+    def calculate_distance(self, query_vector, centroid):
+        return np.linalg.norm(query_vector - centroid)
