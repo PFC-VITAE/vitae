@@ -6,6 +6,7 @@ from ..entities.cluster_algorithm import ClusterAlgorithm
 from ..interfaces.cluster_repository import IClusterRepository
 import numpy as np
 import os
+from helpers.visualize_similarity import find_optimal_eps
 
 class GroupCandidates:
       
@@ -22,6 +23,9 @@ class GroupCandidates:
 
         for obj in objects:
             data = self.object_store.get_dl_object(object_name=obj)
+            data_lattes = self.object_store.get_dl_object(object_name=obj.replace("dgp", "lattes"))
+            if data_lattes:
+                data += data_lattes
             text_id = os.path.splitext(os.path.basename(obj))[0]
 
             segments_embeddings, vector_to_text_id, curr_vector_id = self.vectorizer.vectorize_text(
@@ -66,20 +70,25 @@ class GroupCandidates:
             index, vector_to_text_id = self.vector_store.get_vectors()
             vectors = index.reconstruct_n(0, index.ntotal)
         else: 
-            objects = self.object_store.list_dl_objects(prefix="refined")
+            objects = self.object_store.list_dl_objects(prefix="trusted/dgp") 
             all_embeddings, vector_to_text_id = self.vectorize_texts(objects, vector_to_text_id)
             index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id) 
+            vectors = all_embeddings
 
 
-        # labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
-        labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
+        labels = self.cluster_algorithm.dbscan(vectors, ep=10, minPts=1536)
+        #labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
 
-        self.save_clusters(labels, centroids, vector_to_text_id)
+        # self.cluster_algorithm.kmeans_silhoutte(X=vectors)
+
+
+        #self.save_clusters(labels, centroids, vector_to_text_id)
 
         #!EXPERIMENTOs CLUSTERING
         # find_optimal_eps(vectors, k=1536)
         # print(self.cluster_algorithm.kmeans(n=6, X=vectors))
 
-        # eps_values = [5, 7]
-        # min_samples_values = [769, 1536]
+        eps_values = [10]
+        min_samples_values = [1536]
         # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=False)
+        print('acabei')

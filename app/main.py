@@ -12,7 +12,7 @@ from infra.db.cluster_repository import ClusterRepository
 object_store = ObjectStore()
 v_store = VectorStore()
 
-# usecase = GroupCandidates(object_store=object_store, vector_store=v_store, cluster_repository=ClusterRepository())
+usecase = GroupCandidates(object_store=object_store, vector_store=v_store, cluster_repository=ClusterRepository())
 
 from core.usecases.list_best_candidates import ListBestCandidates
 from infra.db.candidate_repository import CandidateRepository
@@ -22,7 +22,7 @@ candidate_repository = CandidateRepository()
 
 from core.usecases.list_clustered_candidates import ListClusteredCandidates
 
-usecase = ListClusteredCandidates(candidate_repository=candidate_repository, vector_store=v_store, cluster_repository=ClusterRepository())
+# usecase = ListClusteredCandidates(candidate_repository=candidate_repository, vector_store=v_store, cluster_repository=ClusterRepository())
 
 
 usecase.execute()
