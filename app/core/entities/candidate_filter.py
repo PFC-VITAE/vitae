@@ -1,9 +1,9 @@
 class CandidateFilter:
 
     def apply_filters(self, candidates, mission):
-        mission_ranks = [rank.strip() for rank in mission["posto"].split(',')]
-        mission_profiles = [profile.strip().lower() for profile in mission["perfil"].split(',')]
-        mission_degree_type = self.get_degree_type(mission["código"])
+        mission_ranks = [rank.strip() for rank in mission.rank.split(',')]
+        mission_profiles = [profile.strip().lower() for profile in mission.profile.split(',')]
+        mission_degree_type = self.get_degree_type(mission.code)
 
         filtered_candidates = []
         for candidate in candidates:

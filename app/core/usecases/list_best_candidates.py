@@ -2,16 +2,7 @@ from core.interfaces.candidate_repository import ICandidateRepository
 from ..interfaces.vector_store import IVectorStore
 from ..entities.vectorizer import Vectorizer
 from ..entities.candidate_filter import CandidateFilter
-import re
 
-nce = {
-    "código": "42M2025 (Muito Alta)",
-    "posto": "1º Ten, Cap", 
-    "perfil": "QEM Compt",
-    "conhecimento_específico": "Algoritmos de Aprendizado de Máquina Aplicados à Detecção Automática de Comportamento Suspeito em Redes Sociais.",
-    "aplicação": "Defesa Cibernética, Segurança da Informação, Capacitação de Recursos Humanos na forma de pessoal para os cursos de graduação no IME, principalmente na área de Engenharia da Computação.",
-    "programa": "Engenharia de Defesa (PGED)",
-}
 
 
 class ListBestCandidates:
@@ -37,7 +28,7 @@ class ListBestCandidates:
         for cpf in similar_text_ids:
             for candidate in filtered_candidates:
                 if candidate.cpf == cpf:
-                    similar_candidates.append(candidate.full_name)
+                    similar_candidates.append(candidate)
                     break
         return similar_candidates
 
@@ -50,7 +41,7 @@ class ListBestCandidates:
         else:
             return "Não há vetores salvos"
     
-    def execute(self):
+    def execute(self, nce):
         candidates = self.__candidate_repository.get_all_candidates()
 
         filtered_candidates = self.candidate_filter.apply_filters(candidates, mission=nce)
@@ -61,12 +52,11 @@ class ListBestCandidates:
 
         filtered_index, new_vector_to_text_id = self.filter_index(vectors, vector_to_text_id, filtered_candidates_cpf)
 
-        nce_text = f"{nce['aplicação']} {nce['conhecimento_específico']}"
+        nce_text = f"{nce.application} {nce.knowledge}"
 
         query_vector = self.vectorizer.vectorize(nce_text)
    
         similar_candidates = self.find_similar_candidates(query_vector, filtered_candidates, filtered_index, new_vector_to_text_id)
-        print(similar_candidates)
         return similar_candidates
     
     
