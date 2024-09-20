@@ -1,8 +1,7 @@
 from core.interfaces.candidate_repository import ICandidateRepository
 from ..db.dto.candidate_dto import CandidateDTO
 from infra.db.connection import dgp_connection, db_connection
-from core.entities.candidate import Candidate
-from infra.helpers.dict_to_object import dict_to_object
+from helpers.dict_to_object import *
 
 class CandidateRepository(ICandidateRepository):
 
@@ -27,13 +26,20 @@ class CandidateRepository(ICandidateRepository):
     def insert_candidates(self, candidates_list):
         try:
             db = self.db_client["vitae"]
-            collection = db["consolidated_data"]
+            collection = db["candidates"]
 
-            candidates_dict_list = [candidate.to_dict() for candidate in candidates_list]
+            candidates_dict_list = [candidate.__dict__ for candidate in candidates_list]
 
-            data = collection.insert_many(candidates_dict_list)
+            for candidate in candidates_dict_list:
+                candidate_id = candidate.get('_id')
 
-            return data  
+                if candidate_id:
+                    collection.replace_one({'_id': candidate_id}, candidate, upsert=True)
+                else:
+                    collection.insert_one(candidate)
+
+
+            return "Dados inseridos ou atualizados com sucesso"
               
         except Exception as e:
             raise ValueError("Erro ao inserir dados no banco") from e
@@ -42,12 +48,13 @@ class CandidateRepository(ICandidateRepository):
     def get_all_candidates(self):
         try:
             db = self.db_client["vitae"]
-            collection = db["consolidated_data"]
+            collection = db["candidates"]
             documents = list(collection.find())
 
-            candidates_data = [Candidate(dict_to_object(doc)) for doc in documents]
+            candidates_data = [(dict_to_object(doc)) for doc in documents]
 
             return candidates_data
         
         except Exception as e:
             raise ValueError("Erro ao buscar dados no banco") from e
+        
