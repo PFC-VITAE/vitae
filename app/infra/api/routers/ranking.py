@@ -6,14 +6,12 @@ from ..schemas.nce_data import NCEData
 from ..schemas.candidate import Candidate
 
 router = APIRouter(
-    prefix="/ranking", 
-    tags=["Ranking"], 
-    responses={404: {"description": "Not found"}}
+    prefix="/ranking", tags=["Ranking"], responses={404: {"description": "Not found"}}
 )
+
 
 @router.post("/list_best_candidates", response_model=list[Candidate])
 async def list_best_candidates(
-    nce: NCEData, 
-    usecase: Annotated[SubmitDocument, Depends(define_ranking_dependancy)]
+    nce: NCEData, usecase: Annotated[SubmitDocument, Depends(define_ranking_dependancy)]
 ):
     return usecase.execute(nce)

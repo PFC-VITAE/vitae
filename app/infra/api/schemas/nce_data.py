@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class NCEData(BaseModel):
     application: str = Field(..., alias="Aplicação")
     knowledge: str = Field(..., alias="Conhecimento Específico")

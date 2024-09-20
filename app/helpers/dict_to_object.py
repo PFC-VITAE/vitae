@@ -1,5 +1,6 @@
 from types import SimpleNamespace
 
+
 def dict_to_object(d):
     if isinstance(d, dict):
         obj_dict = {}

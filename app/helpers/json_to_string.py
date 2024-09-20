@@ -13,5 +13,5 @@ def json_to_string(data):
             result += json_to_string(item)
     else:
         result += f"{data} "
-    
+
     return result.strip()

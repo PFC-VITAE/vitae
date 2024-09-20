@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def visualize_similarity_results(query_text, similar_text_ids, distances):
     """
     Visualize the similarity search results.
@@ -12,12 +13,16 @@ def visualize_similarity_results(query_text, similar_text_ids, distances):
     fig, ax = plt.subplots(figsize=(10, 6))  # Adjusted figure size
 
     y_pos = range(len(similar_text_ids))
-    ax.barh(y_pos, distances, align='center', color='#556B2F')  # Set the color to moss green
+    ax.barh(
+        y_pos, distances, align="center", color="#556B2F"
+    )  # Set the color to moss green
     ax.set_yticks(y_pos)
     ax.set_yticklabels(similar_text_ids)
     ax.invert_yaxis()  # Reverse the order of IDs to have the most similar at the top
-    ax.set_xlabel('Distância')
-    ax.set_title(f'Similaridade semântica com "Desenvolver conhecimentos sobre as propriedades das biocerâmicas..."')
+    ax.set_xlabel("Distância")
+    ax.set_title(
+        f'Similaridade semântica com "Desenvolver conhecimentos sobre as propriedades das biocerâmicas..."'
+    )
 
     plt.show()
 
@@ -25,6 +30,7 @@ def visualize_similarity_results(query_text, similar_text_ids, distances):
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def find_optimal_eps(vectors, k):
     """
@@ -38,7 +44,7 @@ def find_optimal_eps(vectors, k):
     None: Plota a distância k-NN.
     """
     # Compute k-nearest neighbors
-    nbrs = NearestNeighbors(n_neighbors=k+1).fit(vectors)
+    nbrs = NearestNeighbors(n_neighbors=k + 1).fit(vectors)
 
     # get distances
     dist, ind = nbrs.kneighbors(vectors)
@@ -49,8 +55,8 @@ def find_optimal_eps(vectors, k):
     # plot the k-distance graph
     plt.figure(figsize=(10, 5))
     plt.plot(k_dist)
-    plt.xlabel('Pontos ordenados pela distância')
-    plt.ylabel(f'{k}-Distância')
-    plt.title(f'{k}-Distância para Determinação do eps Ótimo')
+    plt.xlabel("Pontos ordenados pela distância")
+    plt.ylabel(f"{k}-Distância")
+    plt.title(f"{k}-Distância para Determinação do eps Ótimo")
     plt.grid(True)
     plt.show()

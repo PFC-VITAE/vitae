@@ -9,6 +9,8 @@ import matplotlib.cm as cm
 
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
+
+
 class ClusterAlgorithm:
 
     def kmeans(self, n, X):
@@ -61,7 +63,9 @@ class ClusterAlgorithm:
             for i in range(n_clusters):
                 # Aggregate the silhouette scores for samples belonging to
                 # cluster i, and sort them
-                ith_cluster_silhouette_values = sample_silhouette_values[cluster_labels == i]
+                ith_cluster_silhouette_values = sample_silhouette_values[
+                    cluster_labels == i
+                ]
 
                 ith_cluster_silhouette_values.sort()
 
@@ -97,7 +101,14 @@ class ClusterAlgorithm:
             # 2nd Plot showing the actual clusters formed
             colors = cm.nipy_spectral(cluster_labels.astype(float) / n_clusters)
             ax2.scatter(
-                X[:, 0], X[:, 1], marker=".", s=30, lw=0, alpha=0.7, c=colors, edgecolor="k"
+                X[:, 0],
+                X[:, 1],
+                marker=".",
+                s=30,
+                lw=0,
+                alpha=0.7,
+                c=colors,
+                edgecolor="k",
             )
 
             # Labeling the clusters
@@ -143,7 +154,9 @@ class ClusterAlgorithm:
         core_samples_mask = np.zeros_like(labels, dtype=bool)
         core_samples_mask[self.cluster_model.core_sample_indices_] = True
 
-        colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
+        colors = [
+            plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))
+        ]
         for k, col in zip(unique_labels, colors):
             if k == -1:
                 # Black used for noise.
@@ -171,23 +184,31 @@ class ClusterAlgorithm:
                 markersize=6,
             )
 
-        plt.title(f"Estimated number of clusters: {n_clusters_} (Eps={ep}, MinPts={minPts})")
+        plt.title(
+            f"Estimated number of clusters: {n_clusters_} (Eps={ep}, MinPts={minPts})"
+        )
         plt.show()
         return labels
 
-    def test_dbscan_parameters(self, vectors, eps_values, min_samples_values, use_pca=True, n_components=2):
+    def test_dbscan_parameters(
+        self, vectors, eps_values, min_samples_values, use_pca=True, n_components=2
+    ):
         if use_pca:
             pca = PCA(n_components=n_components)
             reduced_vectors = pca.fit_transform(vectors)
         else:
             reduced_vectors = vectors
 
-        fig, axes = plt.subplots(len(eps_values), len(min_samples_values), figsize=(15, 10))
-        fig.suptitle('DBSCAN Clusters para diferentes (Eps, MinPts)', fontsize=16)
+        fig, axes = plt.subplots(
+            len(eps_values), len(min_samples_values), figsize=(15, 10)
+        )
+        fig.suptitle("DBSCAN Clusters para diferentes (Eps, MinPts)", fontsize=16)
 
         for i, eps in enumerate(eps_values):
             for j, min_samples in enumerate(min_samples_values):
-                self.cluster_model = DBSCAN(eps=eps, min_samples=min_samples, metric='l2')
+                self.cluster_model = DBSCAN(
+                    eps=eps, min_samples=min_samples, metric="l2"
+                )
                 labels = self.cluster_model.fit_predict(vectors)
 
                 if use_pca:
@@ -197,21 +218,27 @@ class ClusterAlgorithm:
 
                 ax = axes[i, j]
                 unique_labels = set(labels)
-                colors = [plt.cm.Spectral(each) for each in np.linspace(0, 1, len(unique_labels))]
+                colors = [
+                    plt.cm.Spectral(each)
+                    for each in np.linspace(0, 1, len(unique_labels))
+                ]
 
                 for k, col in zip(unique_labels, colors):
                     if k == -1:
                         col = [0, 0, 0, 1]
 
-                    class_member_mask = (labels == k)
+                    class_member_mask = labels == k
                     xy = data_to_plot[class_member_mask]
-                    ax.plot(xy[:, 0], xy[:, 1], 'o', markerfacecolor=tuple(col),
-                            markeredgecolor='k', markersize=6)
+                    ax.plot(
+                        xy[:, 0],
+                        xy[:, 1],
+                        "o",
+                        markerfacecolor=tuple(col),
+                        markeredgecolor="k",
+                        markersize=6,
+                    )
 
-                ax.set_title(f'Eps={eps}, MinPts={min_samples}')
-          
+                ax.set_title(f"Eps={eps}, MinPts={min_samples}")
 
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         plt.show()
-
-    

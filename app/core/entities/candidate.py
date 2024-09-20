@@ -1,5 +1,3 @@
-from infra.db.dto.candidate_dto import CandidateDTO, CursoDTO
-
 class Candidate:
     def __init__(self, object):
         self._id = object._id
@@ -11,15 +9,14 @@ class Candidate:
         self.war_name = object.war_name
         self.promotion_date = object.promotion_date
         self.dgp_courses = [Course(course) for course in object.dgp_courses]
-        self.updated_last = getattr(object, 'updated_last', None)
-        self.resume = getattr(object, 'resume', None)
-
+        self.updated_last = getattr(object, "updated_last", None)
+        self.resume = getattr(object, "resume", None)
 
     def to_dict(self):
         candidate_dict = self.__dict__.copy()
-        candidate_dict['dgp_courses'] = [course.__dict__ for course in self.dgp_courses]
+        candidate_dict["dgp_courses"] = [course.__dict__ for course in self.dgp_courses]
         return candidate_dict
-        
+
 
 class Course:
     def __init__(self, object):

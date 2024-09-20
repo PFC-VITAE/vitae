@@ -5,7 +5,7 @@ from helpers.split_text import *
 class Vectorizer:
 
     def __init__(self):
-        self.model = SentenceTransformer('bert-base-nli-mean-tokens')
+        self.model = SentenceTransformer("bert-base-nli-mean-tokens")
 
     def vectorize_text(self, text, text_id, curr_vector_id, vector_to_text_id):
         segments = split_text(text)
@@ -18,8 +18,6 @@ class Vectorizer:
         curr_vector_id += len(segments)
 
         return segments_embeddings, vector_to_text_id, curr_vector_id
-    
+
     def vectorize(self, sentence):
         return self.model.encode([sentence])
-
-

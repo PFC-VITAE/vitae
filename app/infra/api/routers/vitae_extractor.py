@@ -4,10 +4,11 @@ from core.usecases.consolidate_candidate_data import ConsolidateCandidateData
 from ..dependency import define_candidate_dependency
 
 router = APIRouter(
-    prefix="/extractor", 
-    tags=["Vitae Extractor"], 
-    responses={404: {"description": "Not found"}}
+    prefix="/extractor",
+    tags=["Vitae Extractor"],
+    responses={404: {"description": "Not found"}},
 )
+
 
 @router.get("/get_data")
 def consolidate_data(
@@ -15,4 +16,3 @@ def consolidate_data(
 ):
 
     return usecase.execute()
-    

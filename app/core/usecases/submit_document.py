@@ -1,5 +1,6 @@
 from core.entities.mission import Mission
 
+
 class SubmitDocument:
 
     def __init__(self, mission: Mission):
