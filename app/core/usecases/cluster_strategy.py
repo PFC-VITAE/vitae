@@ -1,4 +1,5 @@
-from core.interfaces.candidate_repository import ICandidateRepository
+from ..interfaces.ranking_strategy import RankingStrategy
+from ..interfaces.candidate_repository import ICandidateRepository
 from ..interfaces.vector_store import IVectorStore
 from ..entities.vectorizer import Vectorizer
 from ..entities.candidate_filter import CandidateFilter
@@ -14,7 +15,7 @@ nce = {
 }
 
 
-class ListClusteredCandidates:
+class ClusterStrategy(RankingStrategy):
 
     def __init__(
         self,
