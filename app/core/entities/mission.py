@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from .document import Document
 
+
 class Mission(ABC):
 
     @abstractmethod
