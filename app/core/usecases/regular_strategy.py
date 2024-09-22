@@ -33,7 +33,7 @@ class RegularStrategy(RankingStrategy):
         self, query_vector, filtered_candidates, index, vector_to_text_id
     ):
         distances, indices = self.vector_store.search_similar(query_vector, index, k=20)
-        similar_text_ids = [vector_to_text_id[str(idx)] for idx in indices[0]]
+        similar_text_ids = [vector_to_text_id[str(idx)] for idx in indices[0] if idx != -1]
         similar_candidates = []
         for cpf in similar_text_ids:
             for candidate in filtered_candidates:

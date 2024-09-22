@@ -51,7 +51,7 @@ class CandidateFilter:
                 return False
         elif mission_degree_type == "Doctorate":
             if hasattr(candidate, "master") and candidate.master:
-                if hasattr(candidate, "doctorate") and not candidate.doctorate:
+                if hasattr(candidate, "doctor") and not candidate.doctor:
                     return True
                 else:
                     return False
