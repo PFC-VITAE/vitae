@@ -5,12 +5,11 @@ from ..entities.candidate_filter import CandidateFilter
 import re
 
 nce = {
-    "código": "42M2025 (Muito Alta)",
-    "posto": "1º Ten, Cap", 
-    "perfil": "QEM Compt",
-    "conhecimento_específico": "Algoritmos de Aprendizado de Máquina Aplicados à Detecção Automática de Comportamento Suspeito em Redes Sociais.",
-    "aplicação": "Defesa Cibernética, Segurança da Informação, Capacitação de Recursos Humanos na forma de pessoal para os cursos de graduação no IME, principalmente na área de Engenharia da Computação.",
-    "programa": "Engenharia de Defesa (PGED)",
+    "código": "01D2025 (Muito Alta)",
+    "posto": "Cap, Maj", 
+    "perfil": "Eng, Cav, Art, Inf, Com, QEM Com, QMB, Sv Int, QCO Infor, QEM Compt",
+    "conhecimento_específico": "Análise e desenvolvimento de modelos de detecção, identificação e mitigação de ataques cibernéticos com a utilização de aprendizado de máquina (machine learning). Estudar e propor modelos computacionais com foco em problemas do universo de Defesa Cibernética utilizando modelos de machine learning, deep learning e data science para a análise de grandes volumes de dados de ataques visando apoiar a tomada de decisões do Comando em Defesa Cibernética",
+    "aplicação": "Possibilidade de atuação em projetos de defesa cibernética. Atividades de Pesquisa e prevenção de ataques cibernéticos nos sistemas do Exército Brasileiro. Melhorar o assessoramento em decisões de aquisição de equipamentos contendo implementações do que foi estudado na tese de doutorado (algoritmos de aprendizado de máquina para a detecção/prevenção de ataques cibernéticos). O conhecimento será aplicado na análise de tráfego malicioso em sistemas do Exército Brasileiro."
 }
 
 
@@ -68,7 +67,3 @@ class ListBestCandidates:
         similar_candidates = self.find_similar_candidates(query_vector, filtered_candidates, filtered_index, new_vector_to_text_id)
         print(similar_candidates)
         return similar_candidates
-    
-    
-    
-

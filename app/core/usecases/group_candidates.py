@@ -76,19 +76,17 @@ class GroupCandidates:
             vectors = all_embeddings
 
 
-        labels = self.cluster_algorithm.dbscan(vectors, ep=10, minPts=1536)
-        #labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
+        # find_optimal_eps(vectors, k=1536)
+        # labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
+        # labels, centroids = self.cluster_algorithm.kmeans(n=8, X=vectors)
 
-        # self.cluster_algorithm.kmeans_silhoutte(X=vectors)
+        self.cluster_algorithm.kmeans_silhoutte(X=vectors)
 
 
-        #self.save_clusters(labels, centroids, vector_to_text_id)
+        # self.save_clusters(labels, centroids, vector_to_text_id)
 
         #!EXPERIMENTOs CLUSTERING
         # find_optimal_eps(vectors, k=1536)
         # print(self.cluster_algorithm.kmeans(n=6, X=vectors))
 
-        eps_values = [10]
-        min_samples_values = [1536]
-        # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=False)
         print('acabei')
