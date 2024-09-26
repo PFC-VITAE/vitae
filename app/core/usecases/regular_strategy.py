@@ -64,7 +64,7 @@ class RegularStrategy(RankingStrategy):
             vectors, vector_to_text_id, filtered_candidates_cpf
         )
         nce_text = f"{nce.application} {nce.knowledge}"
-        query_vector = self.vectorizer.vectorize(nce_text)
+        query_vector = self.vectorizer.create_embedding_cls(nce_text)
 
         similar_candidates = self.find_similar_candidates(
             query_vector, filtered_candidates, filtered_index, new_vector_to_text_id

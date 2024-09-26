@@ -28,6 +28,9 @@ class GroupCandidates:
 
         for obj in objects:
             data = self.object_store.get_dl_object(object_name=obj)
+            data_lattes = self.object_store.get_dl_object(object_name=obj.replace("dgp", "lattes"))
+            if data_lattes:
+                data += data_lattes
             text_id = os.path.splitext(os.path.basename(obj))[0]
 
             segments_embeddings, vector_to_text_id, curr_vector_id = (
@@ -72,22 +75,16 @@ class GroupCandidates:
         if vectors_bool:
             index, vector_to_text_id = self.vector_store.get_vectors()
             vectors = index.reconstruct_n(0, index.ntotal)
-        else:
-            objects = self.object_store.list_dl_objects(prefix="refined")
-            all_embeddings, vector_to_text_id = self.vectorize_texts(
-                objects, vector_to_text_id
-            )
-            index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id)
+        else: 
+            objects = self.object_store.list_dl_objects(prefix="trusted/dgp") 
+            all_embeddings, vector_to_text_id = self.vectorize_texts(objects, vector_to_text_id)
+            index = self.vector_store.save_vectors(all_embeddings, vector_to_text_id) 
+            vectors = all_embeddings
 
-        # labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
+
+        self.cluster_algorithm.kmeans_silhoutte(X=vectors)
+
         labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
 
+
         self.save_clusters(labels, centroids, vector_to_text_id)
-
-        #!EXPERIMENTOs CLUSTERING
-        # find_optimal_eps(vectors, k=1536)
-        # print(self.cluster_algorithm.kmeans(n=6, X=vectors))
-
-        # eps_values = [5, 7]
-        # min_samples_values = [769, 1536]
-        # self.cluster_algorithm.test_dbscan_parameters(vectors, eps_values, min_samples_values, use_pca=False)
