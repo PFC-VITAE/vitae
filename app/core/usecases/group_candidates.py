@@ -6,16 +6,6 @@ from ..entities.cluster_algorithm import ClusterAlgorithm
 from ..interfaces.cluster_repository import IClusterRepository
 import numpy as np
 import os
-import faiss
-
-def load_vectors_from_faiss(file_path):
-    index = faiss.read_index(file_path)
-    vectors = index.reconstruct_n(0, index.ntotal)
-    return vectors.reshape(index.ntotal, index.d)
-
-file_path = 'C:\\Users\\pamel\\OneDrive\\Documents\\GitHub\\vitae\\old\\faiss_index.idx'
-vectors_ = load_vectors_from_faiss(file_path)
-
 
 class GroupCandidates:
       
@@ -37,7 +27,7 @@ class GroupCandidates:
                 data += data_lattes
             text_id = os.path.splitext(os.path.basename(obj))[0]
 
-            segments_embeddings, vector_to_text_id, curr_vector_id = self.vectorizer.vectorize_text_bertimbau(
+            segments_embeddings, vector_to_text_id, curr_vector_id = self.vectorizer.vectorize_text(
                 text=data,
                 text_id=text_id,
                 curr_vector_id=curr_vector_id,
@@ -88,6 +78,6 @@ class GroupCandidates:
         self.cluster_algorithm.kmeans_silhoutte(X=vectors)
 
         labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
-        
+
 
         self.save_clusters(labels, centroids, vector_to_text_id)

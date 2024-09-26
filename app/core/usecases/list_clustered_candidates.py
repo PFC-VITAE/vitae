@@ -39,7 +39,7 @@ class ListClusteredCandidates:
         for cpf in similar_text_ids:
             for candidate in filtered_candidates:
                 if candidate.cpf == cpf:
-                    similar_candidates.append(candidate.full_name)
+                    similar_candidates.append(candidate)
                     break
         return similar_candidates
 
@@ -79,7 +79,7 @@ class ListClusteredCandidates:
 
         nce_text = f"{nce['aplicação']} {nce['conhecimento_específico']}"
 
-        query_vector = self.vectorizer.vectorize(nce_text)
+        query_vector = self.vectorizer.create_embedding_cls(nce_text)
 
         nearest_cluster = self.get_nearest_cluster(query_vector, self.clusters)
 

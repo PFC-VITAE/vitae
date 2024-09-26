@@ -14,7 +14,7 @@ class Vectorizer:
         outputs = self.model(**tokens)
         return outputs.last_hidden_state[0][0].detach().numpy().reshape(1,-1)
 
-    def vectorize_text_bertimbau(self, text, text_id, curr_vector_id, vector_to_text_id):
+    def vectorize_text(self, text, text_id, curr_vector_id, vector_to_text_id):
         segments = split_text(text)
         segments_embeddings = np.empty((0, 768))
 
