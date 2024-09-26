@@ -6,7 +6,16 @@ from ..entities.cluster_algorithm import ClusterAlgorithm
 from ..interfaces.cluster_repository import IClusterRepository
 import numpy as np
 import os
-from helpers.visualize_similarity import find_optimal_eps
+import faiss
+
+def load_vectors_from_faiss(file_path):
+    index = faiss.read_index(file_path)
+    vectors = index.reconstruct_n(0, index.ntotal)
+    return vectors.reshape(index.ntotal, index.d)
+
+file_path = 'C:\\Users\\pamel\\OneDrive\\Documents\\GitHub\\vitae\\old\\faiss_index.idx'
+vectors_ = load_vectors_from_faiss(file_path)
+
 
 class GroupCandidates:
       
@@ -28,7 +37,7 @@ class GroupCandidates:
                 data += data_lattes
             text_id = os.path.splitext(os.path.basename(obj))[0]
 
-            segments_embeddings, vector_to_text_id, curr_vector_id = self.vectorizer.vectorize_text(
+            segments_embeddings, vector_to_text_id, curr_vector_id = self.vectorizer.vectorize_text_bertimbau(
                 text=data,
                 text_id=text_id,
                 curr_vector_id=curr_vector_id,
@@ -76,17 +85,9 @@ class GroupCandidates:
             vectors = all_embeddings
 
 
-        # find_optimal_eps(vectors, k=1536)
-        # labels = self.cluster_algorithm.dbscan(vectors, ep=5, minPts=1536)
-        # labels, centroids = self.cluster_algorithm.kmeans(n=8, X=vectors)
-
         self.cluster_algorithm.kmeans_silhoutte(X=vectors)
 
+        labels, centroids = self.cluster_algorithm.kmeans(n=2, X=vectors)
+        
 
-        # self.save_clusters(labels, centroids, vector_to_text_id)
-
-        #!EXPERIMENTOs CLUSTERING
-        # find_optimal_eps(vectors, k=1536)
-        # print(self.cluster_algorithm.kmeans(n=6, X=vectors))
-
-        print('acabei')
+        self.save_clusters(labels, centroids, vector_to_text_id)

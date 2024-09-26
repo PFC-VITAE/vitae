@@ -11,8 +11,6 @@ nce = {
     "conhecimento_específico": "Análise e desenvolvimento de modelos de detecção, identificação e mitigação de ataques cibernéticos com a utilização de aprendizado de máquina (machine learning). Estudar e propor modelos computacionais com foco em problemas do universo de Defesa Cibernética utilizando modelos de machine learning, deep learning e data science para a análise de grandes volumes de dados de ataques visando apoiar a tomada de decisões do Comando em Defesa Cibernética",
     "aplicação": "Possibilidade de atuação em projetos de defesa cibernética. Atividades de Pesquisa e prevenção de ataques cibernéticos nos sistemas do Exército Brasileiro. Melhorar o assessoramento em decisões de aquisição de equipamentos contendo implementações do que foi estudado na tese de doutorado (algoritmos de aprendizado de máquina para a detecção/prevenção de ataques cibernéticos). O conhecimento será aplicado na análise de tráfego malicioso em sistemas do Exército Brasileiro."
 }
-
-
 class ListBestCandidates:
 
     def __init__(self, candidate_repository: ICandidateRepository, vector_store: IVectorStore):
@@ -36,7 +34,7 @@ class ListBestCandidates:
         for cpf in similar_text_ids:
             for candidate in filtered_candidates:
                 if candidate.cpf == cpf:
-                    similar_candidates.append(candidate.full_name)
+                    similar_candidates.append(candidate)
                     break
         return similar_candidates
 
@@ -62,8 +60,8 @@ class ListBestCandidates:
 
         nce_text = f"{nce['aplicação']} {nce['conhecimento_específico']}"
 
-        query_vector = self.vectorizer.vectorize(nce_text)
-   
+        query_vector = self.vectorizer.create_embedding_cls(nce_text)
+          
         similar_candidates = self.find_similar_candidates(query_vector, filtered_candidates, filtered_index, new_vector_to_text_id)
         print(similar_candidates)
         return similar_candidates
