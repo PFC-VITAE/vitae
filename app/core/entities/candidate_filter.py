@@ -21,11 +21,11 @@ class CandidateFilter:
         return candidate.rank in mission_ranks
 
     def get_degree_type(self, mission_code):
-        if "D" in mission_code:
-            return "Doctorate"
-        elif "M" in mission_code:
-            return "Master"
-        return "Undefined"
+        if 'D' in mission_code:
+            return 'Doctor'
+        elif 'M' in mission_code:
+            return 'Master'
+        return 'Undefined'
 
     def filter_profile(self, mission_profiles, candidate):
         candidate_profile = candidate.qas_qms.strip().lower()
@@ -49,7 +49,7 @@ class CandidateFilter:
         if mission_degree_type == "Master":
             if hasattr(candidate, "master") and candidate.master:
                 return False
-        elif mission_degree_type == "Doctorate":
+        elif mission_degree_type == "Doctor":
             if hasattr(candidate, "master") and candidate.master:
                 if hasattr(candidate, "doctor") and not candidate.doctor:
                     return True

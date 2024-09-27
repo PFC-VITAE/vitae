@@ -5,15 +5,6 @@ from ..entities.vectorizer import Vectorizer
 from ..entities.candidate_filter import CandidateFilter
 from ..interfaces.cluster_repository import IClusterRepository
 
-nce = {
-    "código": "42M2025 (Muito Alta)",
-    "posto": "1º Ten, Cap",
-    "perfil": "QEM Compt",
-    "conhecimento_específico": "Algoritmos de Aprendizado de Máquina Aplicados à Detecção Automática de Comportamento Suspeito em Redes Sociais.",
-    "aplicação": "Defesa Cibernética, Segurança da Informação, Capacitação de Recursos Humanos na forma de pessoal para os cursos de graduação no IME, principalmente na área de Engenharia da Computação.",
-    "programa": "Engenharia de Defesa (PGED)",
-}
-
 
 class ClusterStrategy(RankingStrategy):
 
@@ -52,7 +43,7 @@ class ClusterStrategy(RankingStrategy):
         for cpf in similar_text_ids:
             for candidate in filtered_candidates:
                 if candidate.cpf == cpf:
-                    similar_candidates.append(candidate.full_name)
+                    similar_candidates.append(candidate)
                     break
         return similar_candidates
 
@@ -89,16 +80,16 @@ class ClusterStrategy(RankingStrategy):
 
         return new_vector_to_text_id, cluster_candidates_vectors
 
-    def execute(self):
+    def execute(self, nce):
         candidates = self.__candidate_repository.get_all_candidates()
 
         vectors, index, vector_to_text_id = self.get_vectors_index()
 
         self.clusters = self.__cluster_repository.get_all_clusters()
 
-        nce_text = f"{nce['aplicação']} {nce['conhecimento_específico']}"
+        nce_text = f"{nce.application} {nce.knowledge}"
 
-        query_vector = self.vectorizer.vectorize(nce_text)
+        query_vector = self.vectorizer.create_embedding_cls(nce_text)
 
         nearest_cluster = self.get_nearest_cluster(query_vector, self.clusters)
 
@@ -125,5 +116,4 @@ class ClusterStrategy(RankingStrategy):
         similar_candidates = self.find_similar_candidates(
             query_vector, filtered_candidates, filtered_index, new_vector_to_text_id
         )
-        print(similar_candidates)
         return similar_candidates
